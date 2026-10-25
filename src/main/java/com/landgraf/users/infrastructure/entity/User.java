@@ -1,10 +1,7 @@
 package com.landgraf.users.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@Builder
 public class User {
 
     @Id
@@ -23,7 +21,7 @@ public class User {
     private String name;
     @Column(name = "email", length = 100)
     private String email;
-    @Column(name = "password", length = 20)
+    @Column(name = "password")
     private String password;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
