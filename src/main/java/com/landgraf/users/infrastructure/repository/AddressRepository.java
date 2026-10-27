@@ -1,6 +1,6 @@
 package com.landgraf.users.infrastructure.repository;
 
-import com.landgraf.SpringProject.infrastructure.entity.Address;
+import com.landgraf.users.infrastructure.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
