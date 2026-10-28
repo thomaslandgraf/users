@@ -6,6 +6,7 @@ import com.landgraf.users.infrastructure.entity.User;
 import com.landgraf.users.infrastructure.exceptions.ConflictException;
 import com.landgraf.users.infrastructure.exceptions.ResourceNotFoundException;
 import com.landgraf.users.infrastructure.repository.UserRepository;
+import com.landgraf.users.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public UserDTO saveUser(UserDTO userDTO){
         emailExist(userDTO.getEmail());
@@ -47,6 +49,16 @@ public class UserService {
 
     public void deleteUserByEmail(String email){
         userRepository.deleteByEmail(email);
+    }
+
+    public UserDTO updateUserData(String token, UserDTO userDTO){
+        String email = jwtUtil.extractUsername(token.substring(7));
+        userDTO.setPassword(userDTO.getPassword() != null ? passwordEncoder.encode(userDTO.getPassword()) : null);
+        User userEntity = userRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Email not Found."));
+
+        User user = userConverter.updateUserData(userEntity, userDTO);
+        return userConverter.forUserDTO(userRepository.save(user));
     }
 }
 
