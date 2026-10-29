@@ -1,10 +1,16 @@
 package com.landgraf.users.business;
 
 import com.landgraf.users.business.converter.UserConverter;
+import com.landgraf.users.business.dto.AddressDTO;
+import com.landgraf.users.business.dto.PhoneNumberDTO;
 import com.landgraf.users.business.dto.UserDTO;
+import com.landgraf.users.infrastructure.entity.Address;
+import com.landgraf.users.infrastructure.entity.PhoneNumber;
 import com.landgraf.users.infrastructure.entity.User;
 import com.landgraf.users.infrastructure.exceptions.ConflictException;
 import com.landgraf.users.infrastructure.exceptions.ResourceNotFoundException;
+import com.landgraf.users.infrastructure.repository.AddressRepository;
+import com.landgraf.users.infrastructure.repository.PhoneNumberRepository;
 import com.landgraf.users.infrastructure.repository.UserRepository;
 import com.landgraf.users.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final PhoneNumberRepository phoneNumberRepository;
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -42,9 +50,14 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public User findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new ResourceNotFoundException("Email not found."));
+    public UserDTO findUserByEmail(String email){
+        try {
+            return userConverter.forUserDTO(userRepository.findByEmail(email).orElseThrow(
+                    () -> new ResourceNotFoundException("Email not found.")));
+        } catch (ResourceNotFoundException e){
+            throw new ResourceNotFoundException("Email not found.");
+        }
+
     }
 
     public void deleteUserByEmail(String email){
@@ -59,6 +72,24 @@ public class UserService {
 
         User user = userConverter.updateUserData(userEntity, userDTO);
         return userConverter.forUserDTO(userRepository.save(user));
+    }
+
+    public AddressDTO updateUserAddress(Long addressId, AddressDTO addressDTO){
+        Address entity = addressRepository.findById(addressId).orElseThrow(
+                () -> new ResourceNotFoundException("Address not found with id: " + addressId)
+        );
+
+        Address address = userConverter.updateUserAddress(entity, addressDTO);
+        return userConverter.forAddressDTO(addressRepository.save(address));
+    }
+
+    public PhoneNumberDTO updateUserPhoneNumber(Long phoneNumberId, PhoneNumberDTO phoneNumberDTO){
+        PhoneNumber entity = phoneNumberRepository.findById(phoneNumberId).orElseThrow(
+                () -> new ResourceNotFoundException("Phone number not found with id: " + phoneNumberId)
+        );
+
+        PhoneNumber phoneNumber = userConverter.updateUserPhoneNumber(entity, phoneNumberDTO);
+        return userConverter.forPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
     }
 }
 
