@@ -1,11 +1,12 @@
 package com.landgraf.users.controller;
 
 import com.landgraf.users.business.UserService;
+import com.landgraf.users.business.dto.AddressDTO;
+import com.landgraf.users.business.dto.PhoneNumberDTO;
 import com.landgraf.users.business.dto.UserDTO;
 import com.landgraf.users.infrastructure.entity.User;
 import com.landgraf.users.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<User> getUserByEmail(@RequestParam("email") String email){
+    public ResponseEntity<UserDTO> getUserByEmail(@RequestParam("email") String email){
         return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 
@@ -45,5 +46,25 @@ public class UserController {
     public ResponseEntity<Void> deleteByEmail(@RequestParam("email") String email){
         userService.deleteUserByEmail(email);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public  ResponseEntity<UserDTO> updateUserData(@RequestBody UserDTO userDTO,
+                                                   @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(userService.updateUserData(token, userDTO));
+    }
+
+    @PutMapping("/address")
+    public ResponseEntity<AddressDTO> updateUserAddress(@RequestBody AddressDTO
+                                                                    addressDTO,
+                                                        @RequestParam("id") Long id){
+        return ResponseEntity.ok(userService.updateUserAddress(id,addressDTO));
+    }
+
+    @PutMapping("/phone_number")
+    public ResponseEntity<PhoneNumberDTO> updateUserPhoneNumber(@RequestBody PhoneNumberDTO
+                                                                phoneNumberDTO,
+                                                        @RequestParam("id") Long id){
+        return ResponseEntity.ok(userService.updateUserPhoneNumber(id,phoneNumberDTO));
     }
 }
