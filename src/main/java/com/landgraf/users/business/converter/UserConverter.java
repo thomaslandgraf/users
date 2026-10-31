@@ -106,6 +106,7 @@ public class UserConverter {
                 .country(addressDTO.getCountry() != null ? addressDTO.getCountry() : entity.getCountry())
                 .streetLine1(addressDTO.getStreetLine1() != null ? addressDTO.getStreetLine1() : entity.getStreetLine1())
                 .streetLine2(addressDTO.getStreetLine2() != null ? addressDTO.getStreetLine2() : entity.getStreetLine2())
+                .userId(addressDTO.getId() != null ? addressDTO.getId() : entity.getUserId())
                 .build();
     }
 
@@ -113,6 +114,26 @@ public class UserConverter {
         return PhoneNumber.builder()
                 .id(entity.getId())
                 .number(phoneNumberDTO.getNumber() != null ? phoneNumberDTO.getNumber() : entity.getNumber())
+                .userId(phoneNumberDTO.getId() != null ? phoneNumberDTO.getId() : entity.getUserId())
+                .build();
+    }
+
+    public Address forAddressEntity(AddressDTO addressDTO, Long userId){
+        return Address.builder()
+                .state(addressDTO.getState())
+                .city(addressDTO.getCity())
+                .zipCode(addressDTO.getZipCode())
+                .country(addressDTO.getCountry())
+                .streetLine1(addressDTO.getStreetLine1())
+                .streetLine2(addressDTO.getStreetLine2())
+                .userId(userId)
+                .build();
+    }
+
+    public PhoneNumber forPhoneNumberEntity(PhoneNumberDTO phoneNumberDTO, Long userId){
+        return PhoneNumber.builder()
+                .number(phoneNumberDTO.getNumber())
+                .userId(userId)
                 .build();
     }
 }

@@ -4,7 +4,6 @@ import com.landgraf.users.business.UserService;
 import com.landgraf.users.business.dto.AddressDTO;
 import com.landgraf.users.business.dto.PhoneNumberDTO;
 import com.landgraf.users.business.dto.UserDTO;
-import com.landgraf.users.infrastructure.entity.User;
 import com.landgraf.users.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -55,16 +54,26 @@ public class UserController {
     }
 
     @PutMapping("/address")
-    public ResponseEntity<AddressDTO> updateUserAddress(@RequestBody AddressDTO
-                                                                    addressDTO,
+    public ResponseEntity<AddressDTO> updateUserAddress(@RequestBody AddressDTO addressDTO,
                                                         @RequestParam("id") Long id){
         return ResponseEntity.ok(userService.updateUserAddress(id,addressDTO));
     }
 
     @PutMapping("/phone_number")
-    public ResponseEntity<PhoneNumberDTO> updateUserPhoneNumber(@RequestBody PhoneNumberDTO
-                                                                phoneNumberDTO,
+    public ResponseEntity<PhoneNumberDTO> updateUserPhoneNumber(@RequestBody PhoneNumberDTO phoneNumberDTO,
                                                         @RequestParam("id") Long id){
         return ResponseEntity.ok(userService.updateUserPhoneNumber(id,phoneNumberDTO));
+    }
+
+    @PostMapping("/address")
+    public ResponseEntity<AddressDTO> registerAddress(@RequestBody AddressDTO addressDTO,
+                                                      @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(userService.registerAddress(addressDTO, token));
+    }
+
+    @PostMapping("/phone_number")
+    public ResponseEntity<PhoneNumberDTO> registerPhoneNumber(@RequestBody PhoneNumberDTO phoneNumberDTO,
+                                                              @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(userService.registerPhoneNumber(phoneNumberDTO, token));
     }
 }

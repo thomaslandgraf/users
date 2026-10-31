@@ -17,5 +17,7 @@ public class PhoneNumber {
     private Long id;
     @Column(name = "number", length = 15)
     private String number;
+    @Column(name = "user_id")
+    private Long userId;
 
 }

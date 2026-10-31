@@ -65,7 +65,7 @@ public class UserService {
     }
 
     public UserDTO updateUserData(String token, UserDTO userDTO){
-        String email = jwtUtil.extractUsername(token.substring(7));
+        String email = jwtUtil.extractEmail(token.substring(7));
         userDTO.setPassword(userDTO.getPassword() != null ? passwordEncoder.encode(userDTO.getPassword()) : null);
         User userEntity = userRepository.findByEmail(email).orElseThrow(
                 () -> new ResourceNotFoundException("Email not Found."));
@@ -85,11 +85,33 @@ public class UserService {
 
     public PhoneNumberDTO updateUserPhoneNumber(Long phoneNumberId, PhoneNumberDTO phoneNumberDTO){
         PhoneNumber entity = phoneNumberRepository.findById(phoneNumberId).orElseThrow(
-                () -> new ResourceNotFoundException("Phone number not found with id: " + phoneNumberId)
+                () -> new ResourceNotFoundException("Phone number not found" + phoneNumberId)
         );
 
         PhoneNumber phoneNumber = userConverter.updateUserPhoneNumber(entity, phoneNumberDTO);
         return userConverter.forPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
+    }
+
+    public AddressDTO registerAddress(AddressDTO addressDTO, String token){
+        String email = jwtUtil.extractEmail(token.substring(7));
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Email not found. " + email)
+        );
+
+        Address address = userConverter.forAddressEntity(addressDTO, user.getId());
+        Address addressEntity = addressRepository.save(address);
+        return userConverter.forAddressDTO(addressEntity);
+    }
+
+    public PhoneNumberDTO registerPhoneNumber(PhoneNumberDTO phoneNumberDTO, String token){
+        String email = jwtUtil.extractEmail(token.substring(7));
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Email not found. " + email)
+        );
+
+        PhoneNumber phoneNumber = userConverter.forPhoneNumberEntity(phoneNumberDTO, user.getId());
+        PhoneNumber phoneNumberEntity = phoneNumberRepository.save(phoneNumber);
+        return userConverter.forPhoneNumberDTO(phoneNumberEntity);
     }
 }
 
