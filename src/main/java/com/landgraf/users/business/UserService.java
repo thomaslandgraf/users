@@ -31,8 +31,8 @@ public class UserService {
     public UserDTO saveUser(UserDTO userDTO){
         emailExist(userDTO.getEmail());
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        User user = userConverter.forUser(userDTO);
-        return userConverter.forUserDTO(userRepository.save(user));
+        User user = userConverter.toUser(userDTO);
+        return userConverter.toUserDTO(userRepository.save(user));
     }
 
     public void emailExist(String email){
@@ -52,7 +52,7 @@ public class UserService {
 
     public UserDTO findUserByEmail(String email){
         try {
-            return userConverter.forUserDTO(userRepository.findByEmail(email).orElseThrow(
+            return userConverter.toUserDTO(userRepository.findByEmail(email).orElseThrow(
                     () -> new ResourceNotFoundException("Email not found.")));
         } catch (ResourceNotFoundException e){
             throw new ResourceNotFoundException("Email not found.");
@@ -71,7 +71,7 @@ public class UserService {
                 () -> new ResourceNotFoundException("Email not Found."));
 
         User user = userConverter.updateUserData(userEntity, userDTO);
-        return userConverter.forUserDTO(userRepository.save(user));
+        return userConverter.toUserDTO(userRepository.save(user));
     }
 
     public AddressDTO updateUserAddress(Long addressId, AddressDTO addressDTO){
@@ -80,7 +80,7 @@ public class UserService {
         );
 
         Address address = userConverter.updateUserAddress(entity, addressDTO);
-        return userConverter.forAddressDTO(addressRepository.save(address));
+        return userConverter.toAddressDTO(addressRepository.save(address));
     }
 
     public PhoneNumberDTO updateUserPhoneNumber(Long phoneNumberId, PhoneNumberDTO phoneNumberDTO){
@@ -89,7 +89,7 @@ public class UserService {
         );
 
         PhoneNumber phoneNumber = userConverter.updateUserPhoneNumber(entity, phoneNumberDTO);
-        return userConverter.forPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
+        return userConverter.toPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
     }
 
     public AddressDTO registerAddress(AddressDTO addressDTO, String token){
@@ -98,9 +98,9 @@ public class UserService {
                 () -> new ResourceNotFoundException("Email not found. " + email)
         );
 
-        Address address = userConverter.forAddressEntity(addressDTO, user.getId());
+        Address address = userConverter.toAddressEntity(addressDTO, user.getId());
         Address addressEntity = addressRepository.save(address);
-        return userConverter.forAddressDTO(addressEntity);
+        return userConverter.toAddressDTO(addressEntity);
     }
 
     public PhoneNumberDTO registerPhoneNumber(PhoneNumberDTO phoneNumberDTO, String token){
@@ -109,9 +109,9 @@ public class UserService {
                 () -> new ResourceNotFoundException("Email not found. " + email)
         );
 
-        PhoneNumber phoneNumber = userConverter.forPhoneNumberEntity(phoneNumberDTO, user.getId());
+        PhoneNumber phoneNumber = userConverter.toPhoneNumberEntity(phoneNumberDTO, user.getId());
         PhoneNumber phoneNumberEntity = phoneNumberRepository.save(phoneNumber);
-        return userConverter.forPhoneNumberDTO(phoneNumberEntity);
+        return userConverter.toPhoneNumberDTO(phoneNumberEntity);
     }
 }
 

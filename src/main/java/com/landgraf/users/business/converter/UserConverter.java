@@ -13,21 +13,21 @@ import java.util.List;
 @Component
 public class UserConverter {
 
-    public User forUser(UserDTO userDTO){
+    public User toUser(UserDTO userDTO){
         return User.builder()
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
-                .addresses(forListAddresses(userDTO.getAddresses()))
-                .phoneNumber(forListPhoneNumber(userDTO.getPhoneNumber()))
+                .addresses(userDTO.getAddresses() != null ? toListAddresses(userDTO.getAddresses()) : null)
+                .phoneNumber(userDTO.getPhoneNumber() != null ? toListPhoneNumber(userDTO.getPhoneNumber()) : null)
                 .build();
     }
 
-    public List<Address> forListAddresses(List<AddressDTO> addressDTOList){
-        return addressDTOList.stream().map(this::forAddress).toList();
+    public List<Address> toListAddresses(List<AddressDTO> addressDTOList){
+        return addressDTOList.stream().map(this::toAddress).toList();
     }
 
-    public Address forAddress(AddressDTO addressDTO){
+    public Address toAddress(AddressDTO addressDTO){
         return Address.builder()
                 .state(addressDTO.getState())
                 .city(addressDTO.getCity())
@@ -38,32 +38,32 @@ public class UserConverter {
                 .build();
     }
 
-    public List<PhoneNumber> forListPhoneNumber(List<PhoneNumberDTO> phoneNumberDTOList){
-        return phoneNumberDTOList.stream().map(this::forPhoneNumber).toList();
+    public List<PhoneNumber> toListPhoneNumber(List<PhoneNumberDTO> phoneNumberDTOList){
+        return phoneNumberDTOList.stream().map(this::toPhoneNumber).toList();
     }
 
-    public PhoneNumber forPhoneNumber(PhoneNumberDTO phoneNumberDTO){
+    public PhoneNumber toPhoneNumber(PhoneNumberDTO phoneNumberDTO){
         return PhoneNumber.builder()
                 .number(phoneNumberDTO.getNumber())
                 .build();
     }
 
 
-    public UserDTO forUserDTO(User user){
+    public UserDTO toUserDTO(User user){
         return UserDTO.builder()
                 .name(user.getName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .addresses(forListAddressesDTO(user.getAddresses()))
-                .phoneNumber(forListPhoneNumberDTO(user.getPhoneNumber()))
+                .addresses(user.getAddresses() != null ? toListAddressesDTO(user.getAddresses()) : null)
+                .phoneNumber(user.getPhoneNumber() != null ? toListPhoneNumberDTO(user.getPhoneNumber()) : null)
                 .build();
     }
 
-    public List<AddressDTO> forListAddressesDTO(List<Address> addressList){
-        return addressList.stream().map(this::forAddressDTO).toList();
+    public List<AddressDTO> toListAddressesDTO(List<Address> addressList){
+        return addressList.stream().map(this::toAddressDTO).toList();
     }
 
-    public AddressDTO forAddressDTO(Address address){
+    public AddressDTO toAddressDTO(Address address){
         return AddressDTO.builder()
                 .id(address.getId())
                 .state(address.getState())
@@ -75,11 +75,11 @@ public class UserConverter {
                 .build();
     }
 
-    public List<PhoneNumberDTO> forListPhoneNumberDTO(List<PhoneNumber> phoneNumberList){
-        return phoneNumberList.stream().map(this::forPhoneNumberDTO).toList();
+    public List<PhoneNumberDTO> toListPhoneNumberDTO(List<PhoneNumber> phoneNumberList){
+        return phoneNumberList.stream().map(this::toPhoneNumberDTO).toList();
     }
 
-    public PhoneNumberDTO forPhoneNumberDTO(PhoneNumber phoneNumber){
+    public PhoneNumberDTO toPhoneNumberDTO(PhoneNumber phoneNumber){
         return PhoneNumberDTO.builder()
                 .id(phoneNumber.getId())
                 .number(phoneNumber.getNumber())
@@ -118,7 +118,7 @@ public class UserConverter {
                 .build();
     }
 
-    public Address forAddressEntity(AddressDTO addressDTO, Long userId){
+    public Address toAddressEntity(AddressDTO addressDTO, Long userId){
         return Address.builder()
                 .state(addressDTO.getState())
                 .city(addressDTO.getCity())
@@ -130,7 +130,7 @@ public class UserConverter {
                 .build();
     }
 
-    public PhoneNumber forPhoneNumberEntity(PhoneNumberDTO phoneNumberDTO, Long userId){
+    public PhoneNumber toPhoneNumberEntity(PhoneNumberDTO phoneNumberDTO, Long userId){
         return PhoneNumber.builder()
                 .number(phoneNumberDTO.getNumber())
                 .userId(userId)
