@@ -60,7 +60,8 @@ public class UserService {
 
     }
 
-    public void deleteUserByEmail(String email){
+    public void deleteUser(String token){
+        String email = jwtUtil.extractEmail(token.substring(7));
         userRepository.deleteByEmail(email);
     }
 

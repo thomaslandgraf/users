@@ -15,12 +15,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<String> handleConflitException(ConflictException conflictException){
+    public ResponseEntity<String> handleConflictException(ConflictException conflictException){
         return new ResponseEntity<>(conflictException.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException unauthorizedException){
         return new ResponseEntity<>(unauthorizedException.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException illegalArgumentException){
+        return new ResponseEntity<>(illegalArgumentException.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidZipCodeException.class)
+    public ResponseEntity<String> handleInvalidZipCodeException(InvalidZipCodeException invalidZipCodeException){
+        return new ResponseEntity<>(invalidZipCodeException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
