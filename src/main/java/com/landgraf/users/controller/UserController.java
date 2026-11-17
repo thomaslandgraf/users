@@ -38,13 +38,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserDTO userDTO){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDTO.getEmail(),
-                        userDTO.getPassword())
-        );
-
-        return "Bearer " + jwtUtil.generateToken(authentication.getName());
+    public ResponseEntity<String> login(@RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(userService.login(userDTO));
     }
 
     @GetMapping
