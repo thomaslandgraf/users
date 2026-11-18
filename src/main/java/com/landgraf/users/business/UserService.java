@@ -9,11 +9,18 @@ import com.landgraf.users.infrastructure.entity.PhoneNumber;
 import com.landgraf.users.infrastructure.entity.User;
 import com.landgraf.users.infrastructure.exceptions.ConflictException;
 import com.landgraf.users.infrastructure.exceptions.ResourceNotFoundException;
+import com.landgraf.users.infrastructure.exceptions.UnauthorizedException;
 import com.landgraf.users.infrastructure.repository.AddressRepository;
 import com.landgraf.users.infrastructure.repository.PhoneNumberRepository;
 import com.landgraf.users.infrastructure.repository.UserRepository;
 import com.landgraf.users.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +34,7 @@ public class UserService {
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
     public UserDTO saveUser(UserDTO userDTO){
         emailExist(userDTO.getEmail());
@@ -73,6 +81,19 @@ public class UserService {
 
         User user = userConverter.updateUserData(userEntity, userDTO);
         return userConverter.toUserDTO(userRepository.save(user));
+    }
+
+    public String login(UserDTO userDTO) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userDTO.getEmail(),
+                            userDTO.getPassword())
+            );
+
+            return "Bearer " + jwtUtil.generateToken(authentication.getName());
+        } catch (AuthenticationException e) {
+            throw new UnauthorizedException("User or password invalid: ", e.getCause());
+        }
     }
 
     public AddressDTO updateUserAddress(Long addressId, AddressDTO addressDTO){
