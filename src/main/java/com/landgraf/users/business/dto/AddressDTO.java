@@ -1,6 +1,6 @@
 package com.landgraf.users.business.dto;
 
-import jakarta.persistence.Column;
+
 import lombok.*;
 
 @Getter
